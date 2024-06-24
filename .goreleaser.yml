@@ -1,0 +1,32 @@
+project_name: pulumi-terraform-provider
+version: 2
+before:
+  hooks:
+  - "make -C dynamic test"
+builds:
+- dir: dynamic
+  env:
+  - CGO_ENABLED=0
+  - GO111MODULE=on
+  goos:
+  - darwin
+  - windows
+  - linux
+  goarch:
+  - amd64
+  - arm64
+  ignore: []
+  main: ./main.go
+  ldflags:
+  - "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore"
+  - "-X github.com/pulumi/pulumi-terraform-provider/dynamic/version.version={{.Tag}}"
+  binary: pulumi-resource-terraform-provider
+archives:
+- name_template: "{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
+  id: archive
+snapshot:
+  name_template: "{{ .Tag }}-SNAPSHOT"
+changelog:
+  disable: true
+release:
+  disable: false
