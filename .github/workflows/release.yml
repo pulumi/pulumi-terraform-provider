@@ -1,0 +1,100 @@
+name: release
+on:
+  push:
+    tags:
+    - v*.*.*
+    - "!v*.*.*-**"
+env:
+  GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+  PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
+  PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+  PUBLISH_REPO_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+  GOVERSION: 1.21.x
+
+jobs:
+  prerequisites:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Ensure Tag (not branch)
+      run: |
+        if [ "${{ github.ref_type }}" != "tag" ]; then exit 1; fi
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+      with:
+        repository: pulumi/pulumi-terraform-bridge
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GOVERSION }}
+        cache-dependency-path: "dynamic/go.sum"
+    - name: Install Pulumi CLI
+      uses: pulumi/actions@v5
+    - name: Build pulumi-terraform-provider
+      run: VERSION="${{ github.ref_name }}" make -C dynamic build
+    - name: Check worktree clean
+      shell: bash
+      run: |
+        #!/bin/bash
+        set -o nounset -o errexit -o pipefail
+
+        # ensure the index is up to date, in CI we were seeing some cases
+        # where git diff-files would show the entire tree was unmerged
+        # and this addresses that.
+        git update-index -q --refresh
+
+        p=$(git status --porcelain)
+        if [ -n "$p" ]; then
+          >&2 echo "error: working tree is not clean, aborting!"
+          git status
+          git diff
+          exit 1
+        fi
+    - run: git status --porcelain
+    - name: Tar provider binary
+      run: tar -zcf ${{ github.workspace }}/pulumi-terraform-provider.tar.gz -C ${{
+        github.workspace}}/dynamic/bin/ pulumi-resource-terraform-provider
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pulumi-terraform-provider.tar.gz
+        path: ${{ github.workspace }}/pulumi-terraform-provider.tar.gz
+  test:
+    runs-on: ubuntu-latest
+    needs: prerequisites
+    steps:
+    - name: Download provider
+      uses: actions/download-artifact@v4
+      with:
+        name: pulumi-terraform-provider.tar.gz
+        path: ${{ github.workspace }}/bin
+  publish:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+      with:
+        repository: pulumi/pulumi-terraform-bridge
+        fetch-depth: 0
+        path: ${{ github.workspace }}/bridge
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        path: ${{ github.workspace }}/repo
+    - name: Apply matching tag
+      # GoReleaser expects to run in a repo tagged with the tag it is releasing.
+      #
+      # We are running a release in the bridge git repo, but not releasing the bridge, so
+      # we add a local tag to work around GoReleaser.
+      run: cd ${{ github.workspace }}/bridge && git tag "${{ github.ref_name }}"
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v6
+      with:
+        args: release --clean -f ${{ github.workspace }}/repo/.goreleaser.yml
+        version: latest
+        workdir: ${{ github.workspace }}/bridge
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GORELEASER_CURRENT_TAG: "${{ github.ref_name }}"
