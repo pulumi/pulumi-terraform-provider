@@ -109,10 +109,10 @@ jobs:
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
       with:
-        args: |
-          release \
-          --clean \
-          --config ${{ github.workspace }}/repo/.goreleaser.yml \
+        args: >-
+          release
+          --clean
+          --config ${{ github.workspace }}/repo/.goreleaser.yml
           --release-notes ${{ github.workspace }}/release-notes.md
         version: latest
         workdir: ${{ github.workspace }}/bridge
