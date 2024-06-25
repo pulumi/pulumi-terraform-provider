@@ -89,8 +89,8 @@ jobs:
       run: cd ${{ github.workspace }}/bridge && git rev-parse HEAD >> ${{ github.workspace }}/release_sha.txt
     - name: Check previous release for SHA
       run: |
-        echo "PREVIOUS_TAG=$(gh release view --json tagName --jq .tagName)" >> $GITHUB_ENV
-        gh release download --pattern release_sha.txt --output ${{ github.workspace }}/previous_release_sha.txt
+        echo "PREVIOUS_TAG=$(gh release view --json tagName --jq .tagName --repo pulumi/pulumi-terraform-provider)" >> $GITHUB_ENV
+        gh release download --pattern release_sha.txt --output ${{ github.workspace }}/previous_release_sha.txt --repo pulumi/pulumi-terraform-provider
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Generate release notes
