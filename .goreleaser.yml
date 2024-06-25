@@ -28,4 +28,7 @@ snapshot:
 changelog:
   disable: true
 release:
+  github:
+    owner: pulumi
+    name: pulumi-terraform-provider
   disable: false
