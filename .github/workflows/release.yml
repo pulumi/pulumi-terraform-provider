@@ -109,7 +109,7 @@ jobs:
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
       with:
-        args: |
+        args: >-
           release \
           --clean \
           --config ${{ github.workspace }}/repo/.goreleaser.yml \
