@@ -4,8 +4,8 @@ on:
     tags:
     - v*.*.*
     - "!v*.*.*-**"
+
 env:
-  # GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -91,10 +91,12 @@ jobs:
       run: cd ${{ github.workspace }}/bridge && git tag "${{ github.ref_name }}"
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
+      permissions:
+        contents: write
       with:
         args: release --clean -f ${{ github.workspace }}/repo/.goreleaser.yml
         version: latest
         workdir: ${{ github.workspace }}/bridge
       env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GORELEASER_CURRENT_TAG: "${{ github.ref_name }}"
