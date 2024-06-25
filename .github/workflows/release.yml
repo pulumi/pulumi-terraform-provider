@@ -4,8 +4,8 @@ on:
     tags:
     - v*.*.*
     - "!v*.*.*-**"
+
 env:
-  # GITHUB_TOKEN: ${{ secrets.PULUMI_BOT_TOKEN }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
   PUBLISH_REPO_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -71,6 +71,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: test
+    permissions:
+      contents: write
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
@@ -96,5 +98,5 @@ jobs:
         version: latest
         workdir: ${{ github.workspace }}/bridge
       env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GORELEASER_CURRENT_TAG: "${{ github.ref_name }}"
