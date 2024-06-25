@@ -85,6 +85,19 @@ jobs:
       with:
         fetch-depth: 0
         path: ${{ github.workspace }}/repo
+    - name: Stamp released SHA
+      run: cd ${{ github.workspace }}/bridge && git rev-parse HEAD >> ${{ github.workspace }}/release_sha.txt
+    - name: Check previous release for SHA
+      run: |
+        echo "PREVIOUS_TAG=$(gh release view --json tagName --jq .tagName)" >> $GITHUB_ENV
+        gh release download --pattern release_sha.txt --output ${{ github.workspace }}/previous_release_sha.txt
+    - name: Generate release notes
+      run: |
+        cat <<EOF > ${{ github.workspace }}/release-notes.md
+        This release was generated from [$(cat ${{ github.workspace }}/release_sha.txt)](https://github.com/pulumi/pulumi-terraform-bridge/commit/$(cat ${{ github.workspace }}/release_sha.txt)).
+
+        For a list of changes, see https://github.com/pulumi/pulumi-terraform-bridge/compare/$(cat ${{ github.workspace }}/previous_release_sha.txt)...$(cat ${{ github.workspace }}/release_sha.txt)
+        EOF
     - name: Apply matching tag
       # GoReleaser expects to run in a repo tagged with the tag it is releasing.
       #
@@ -94,9 +107,14 @@ jobs:
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
       with:
-        args: release --clean -f ${{ github.workspace }}/repo/.goreleaser.yml
+        args: |
+          release \
+          --clean \
+          --config ${{ github.workspace }}/repo/.goreleaser.yml \
+          --release-notes ${{ github.workspace }}/release-notes.md
         version: latest
         workdir: ${{ github.workspace }}/bridge
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GORELEASER_CURRENT_TAG: "${{ github.ref_name }}"
+        GORELEASER_PREVIOUS_TAG: "${{ env.PREVIOUS_TAG }}"
