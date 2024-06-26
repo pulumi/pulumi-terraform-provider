@@ -17,8 +17,7 @@ builds:
   - arm64
   ignore: []
   ldflags:
-  - "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore"
-  - "-X github.com/pulumi/pulumi-terraform-provider/dynamic/version.version={{.Tag}}"
+  - "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore -X github.com/pulumi/pulumi-terraform-provider/dynamic/version.version={{.Tag}}"
   binary: pulumi-resource-terraform-provider
 archives:
 - name_template: "{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"

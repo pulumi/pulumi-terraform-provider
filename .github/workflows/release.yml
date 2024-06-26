@@ -99,9 +99,9 @@ jobs:
     - name: Generate release notes
       run: |
         cat <<EOF > ${{ github.workspace }}/release-notes.md
-        This release was generated from [$(cat ${{ github.workspace }}/release_sha.txt)](https://github.com/pulumi/pulumi-terraform-bridge/commit/$(cat ${{ github.workspace }}/release_sha.txt)).
+        This release was generated from [$(cat ${{ github.workspace }}/bridge/release_sha.txt)](https://github.com/pulumi/pulumi-terraform-bridge/commit/$(cat ${{ github.workspace }}/bridge/release_sha.txt)).
 
-        For a list of changes, see https://github.com/pulumi/pulumi-terraform-bridge/compare/$(cat ${{ github.workspace }}/previous_release_sha.txt)...$(cat ${{ github.workspace }}/release_sha.txt)
+        For a list of changes, see https://github.com/pulumi/pulumi-terraform-bridge/compare/$(cat ${{ github.workspace }}/previous_release_sha.txt)...$(cat ${{ github.workspace }}/bridge/release_sha.txt)
         EOF
         cat ${{ github.workspace }}/release-notes.md
     - name: Apply matching tag
