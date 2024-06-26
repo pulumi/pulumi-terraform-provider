@@ -28,7 +28,10 @@ snapshot:
 # changelog: { disable: true } # We pass GoReleaser a CHANGELOG to use
 release:
   extra_files:
-    - glob: ../release_sha.txt # We need release_sha to generate accurate changelogs
+    # We need release_sha to generate accurate changelogs
+    #
+    # This file is generated as part of the release process.
+    - glob: release_sha.txt
   github:
     owner: pulumi
     name: pulumi-terraform-provider

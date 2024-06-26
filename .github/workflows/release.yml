@@ -86,7 +86,10 @@ jobs:
         fetch-depth: 0
         path: ${{ github.workspace }}/repo
     - name: Stamp released SHA
-      run: cd ${{ github.workspace }}/bridge && git rev-parse HEAD >> ${{ github.workspace }}/release_sha.txt
+      run: |
+        cd ${{ github.workspace }}/bridge && git rev-parse HEAD >> ${{ github.workspace }}/bridge/release_sha.txt
+        echo release_sha.txt > ${{ github.workspace }}/gitignore_global
+        git config --global core.excludesFile ${{ github.workspace }}/gitignore_global
     - name: Check previous release for SHA
       run: |
         echo "PREVIOUS_TAG=$(gh release view --json tagName --jq .tagName --repo pulumi/pulumi-terraform-provider)" >> $GITHUB_ENV
