@@ -100,6 +100,7 @@ jobs:
 
         For a list of changes, see https://github.com/pulumi/pulumi-terraform-bridge/compare/$(cat ${{ github.workspace }}/previous_release_sha.txt)...$(cat ${{ github.workspace }}/release_sha.txt)
         EOF
+        cat ${{ github.workspace }}/release-notes.md
     - name: Apply matching tag
       # GoReleaser expects to run in a repo tagged with the tag it is releasing.
       #
@@ -114,7 +115,7 @@ jobs:
           --clean
           --config ${{ github.workspace }}/repo/.goreleaser.yml
           --release-notes ${{ github.workspace }}/release-notes.md
-        version: latest
+        version: "~> v2"
         workdir: ${{ github.workspace }}/bridge
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
