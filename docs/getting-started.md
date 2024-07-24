@@ -38,7 +38,7 @@ Random provider, but any provider will work the same way.
 
 ### Prerequisites
 
-We need to use *exactly* `v1.126.0` of `pulumi` and `pulumi-language-python`.
+We need to use *exactly* `v3.126.0` of `pulumi` and `pulumi-language-python`.
 
 > [!WARNING]
 > If you use the wrong version of `pulumi` or `pulumi-language-python` you may get an
