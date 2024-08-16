@@ -38,7 +38,7 @@ Random provider, but any provider will work the same way.
 
 ### Prerequisites
 
-We need to use *exactly* `v3.126.0` of `pulumi` and `pulumi-language-python`.
+We need to use *exactly* `v3.129.0` of `pulumi` and `pulumi-language-python`.
 
 > [!WARNING]
 > If you use the wrong version of `pulumi` or `pulumi-language-python` you may get an
@@ -64,24 +64,41 @@ GitHub token.
 We first create the SDK for the provider:
 
 ```console
-pulumi package gen-sdk terraform-provider --language python --out random -- hashicorp/random
+pulumi package add terraform-provider hashicorp/random
+Successfully generated a Python SDK for the random package at ./demo-dynamic-terraform-provider/sdks/random
+
+To use this SDK in your Python project, run the following command:
+
+  echo sdks/random >> requirements.txt
+
+  pulumi install
+
+You can then import the SDK in your Python code with:
+
+  import pulumi_random as random
+
 ```
 
-This will generate an SDK for `hashicorp/random` at the latest version in `./random`. The
+This will generate an SDK for `hashicorp/random` at the latest version in `./sdks/random`. The
 SDK is named `pulumi_random`.
 
-To tell `pip` how to depend on the locally generated SDK, we need to edit
-`requirements.txt` so it reads:
-
-```pip
-pulumi==3.126.0     # The interface is currently unstable, so we need to manually match versions.
--e ./random/python  # -e tells pip that this is a local provider
-```
-
-We then need to tell Python to read our `requirements.txt`:
+We now follow the instructions that `pulumi package add` gave us:
 
 ```console
-./venv/bin/pip install -r requirements.txt
+echo sdks/random >> requirements.txt
+```
+
+At this point, our `requirements.txt` file reads as:
+
+```pip
+pulumi==3.129.0 # The interface is currently unstable, so we need to manually match versions.
+./random/python # Our local terraform-provider-random SDK
+```
+
+We can then "finish" the installation:
+
+```console
+pulumi install
 ```
 
 We have now installed the generated SDK into the local Python environment. We can consume
