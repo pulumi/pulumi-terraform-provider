@@ -1,0 +1,17 @@
+{
+  "name": "terraform-provider",
+  "displayName": "Any Terraform Provider",
+  "version": "0.0.0-dev",
+  "description": "Use any Terraform provider with Pulumi",
+  "keywords": [
+    "catagory/utility"
+  ],
+  "logoUrl": "https://raw.githubusercontent.com/pulumi/pulumi-terraform-provider/main/assets/logo.png",
+  "meta": {
+    "moduleFormat": "(.*)(?:/[^/]*)"
+  },
+  "config": {},
+  "provider": {
+    "type": "object"
+  }
+}

@@ -124,3 +124,21 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GORELEASER_CURRENT_TAG: "${{ github.ref_name }}"
         GORELEASER_PREVIOUS_TAG: "${{ env.PREVIOUS_TAG }}"
+  publish_docs:
+    name: create_docs_build
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Metadata build
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PULUMI_BOT_TOKEN }}
+          repository: pulumi/registry
+          event-type: resource-provider
+          client-payload: |-
+            {
+              "project": "${{ github.repository }}",
+              "project-shortname": "terraform-provider",
+              "ref": "${{ github.ref_name }}",
+              "schema-path": "assets/schema.json"
+            }
