@@ -21,7 +21,7 @@ As an example, let's depend directly on Hashicorp's [terraform-provider-random](
 
 {{% notes type="info" %}}
 
-You will need to be using a version of Pulumi >= 3.29.0.
+You will need to be using a version of Pulumi >= 3.130.0.
 
 {{% /notes %}}
 
