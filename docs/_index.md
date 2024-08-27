@@ -13,6 +13,8 @@ final design.
 
 {{% /notes %}}
 
+Any feedback is welcome! Please file suggestions and bugs at [pulumi/pulumi-terraform-provider](https://github.com/pulumi/pulumi-terraform-provider/issues).
+
 ## Example
 
 As an example, let's depend directly on Hashicorp's [terraform-provider-random](https://github.com/hashicorp/terraform-provider-random).
