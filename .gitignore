@@ -1,1 +1,4 @@
 bin
+**/dotnet/obj
+**/dotnet/sdk/obj
+**/dotnet/sdk/logo.png

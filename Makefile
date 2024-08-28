@@ -14,7 +14,7 @@
 
 # Validate a provider
 check: bin/validate
-	if [ $(SOURCE) == "" ]; then echo 'Missing $$(SOURCE)'; exit 1; fi
+	@if [ $(SOURCE) == "" ]; then echo 'Missing $$(SOURCE)'; exit 1; fi
 	bin/validate check --source $(SOURCE)
 
 bin/validate: bin

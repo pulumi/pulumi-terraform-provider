@@ -41,17 +41,42 @@ func checkCmd() *cobra.Command {
 			ctx := context.Background()
 			version, err := getDynamicProviderVersion(ctx)
 			if err != nil {
-				exit(fmt.Errorf("unable to get terraform-provider version"))
+				exit(fmt.Errorf("unable to get terraform-provider version: %w", err))
 			}
 			report := providerReport{
-				version: version,
-				args:    []string{source},
+				version:   version,
+				args:      []string{source},
+				languages: map[string]languageReport{},
+			}
+
+			report.pulumiVersion, err = getPulumiVersion(ctx)
+			if err != nil {
+				exit(fmt.Errorf("unable to get pulumi version: %w", err))
 			}
 
 			report.schema, report.schemaStderr, err = getDynamicProviderSchema(ctx, source, "")
 			if err != nil {
 				fmt.Printf("unable to get schema for %q: %s\n", report.args, err.Error())
 				exit(report.write(rootPath))
+			}
+
+			tmpDir, err := os.MkdirTemp("", "check")
+			if err != nil {
+				exit(err)
+			}
+			defer func() {
+				if err := os.RemoveAll(tmpDir); err != nil {
+					exit(err)
+				}
+			}()
+
+			schemaPath := filepath.Join(tmpDir, "schema.json")
+			if err := os.WriteFile(schemaPath, marshal(report.schema), 0600); err != nil {
+				exit(err)
+			}
+
+			for lang, check := range languages {
+				report.languages[lang] = check(ctx, schemaPath, tmpDir)
 			}
 
 			fmt.Printf("All data collected\n")
@@ -87,9 +112,19 @@ func getDynamicProviderVersion(ctx context.Context) (string, error) {
 
 }
 
+func getPulumiVersion(ctx context.Context) (string, error) {
+	var stdout bytes.Buffer
+	cmd := exec.CommandContext(ctx, "pulumi", "version")
+	cmd.Stdout = &stdout
+	err := cmd.Run()
+	return strings.TrimSpace(stdout.String()), err
+
+}
+
 func getDynamicProviderSchema(ctx context.Context, source, version string) (*schema.PackageSpec, []byte, error) {
 	args := []string{
 		"package",
+		"get-schema",
 		"terraform-provider",
 		source,
 	}
@@ -103,7 +138,7 @@ func getDynamicProviderSchema(ctx context.Context, source, version string) (*sch
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		return nil, nil, err
+		return nil, stderr.Bytes(), err
 	}
 	var spec schema.PackageSpec
 	err = json.Unmarshal(stdout.Bytes(), &spec)
@@ -114,8 +149,9 @@ func getDynamicProviderSchema(ctx context.Context, source, version string) (*sch
 }
 
 type providerReport struct {
-	version string
-	args    []string
+	version       string
+	args          []string
+	pulumiVersion string
 
 	schema       *schema.PackageSpec
 	schemaStderr []byte
@@ -125,8 +161,11 @@ type providerReport struct {
 
 type languageReport struct {
 	buildCommand string
-	succeeded    bool
-	stderr       []byte
+	genSdkStderr []byte
+
+	succeeded   bool
+	buildStderr []byte
+	sdkPath     string
 }
 
 func (r providerReport) path() string {
@@ -146,7 +185,8 @@ func (r providerReport) path() string {
 }
 
 type metadata struct {
-	Args []string `json:"args"`
+	Args          []string `json:"args"`
+	PulumiVersion string   `json:"pulumiVersion"`
 }
 
 func marshal(v any) []byte {
@@ -175,9 +215,47 @@ func (r providerReport) write(root string) error {
 		}
 	}
 	if err := os.WriteFile(filepath.Join(dir, "metadata.json"), marshal(metadata{
-		Args: r.args,
+		Args:          r.args,
+		PulumiVersion: r.pulumiVersion,
 	}), 0600); err != nil {
 		return err
+	}
+
+	for lang, report := range r.languages {
+		dir := filepath.Join(dir, lang)
+		if len(report.buildStderr) > 0 {
+			if err := os.WriteFile(
+				filepath.Join(dir, "build-stderr.txt"),
+				report.buildStderr, 0600); err != nil {
+				return err
+			}
+		}
+
+		if len(report.genSdkStderr) > 0 {
+			if err := os.WriteFile(
+				filepath.Join(dir, "gen-sdk-stderr.txt"),
+				report.genSdkStderr, 0600); err != nil {
+				return err
+			}
+		}
+
+		if report.sdkPath != "" {
+			err := os.CopyFS(filepath.Join(dir, "sdk"), os.DirFS(report.sdkPath))
+			if err != nil {
+				return err
+			}
+		}
+
+		if err := os.WriteFile(filepath.Join(dir, "metadata.json"), marshal(struct {
+			BuildCommand string `json:"buildCommand"`
+			Succeded     bool   `json:"succeded"`
+		}{
+			BuildCommand: report.buildCommand,
+			Succeded:     report.succeeded,
+		}), 0600); err != nil {
+			return err
+		}
+
 	}
 
 	return nil
