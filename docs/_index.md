@@ -222,13 +222,9 @@ public class App {
 {{% /choosable %}}
 {{% choosable language yaml %}}
 
-{{% notes type="info" %}}
-
 ```yaml
 # Coming soon
 ```
-
-{{% /notes %}}
 
 {{% /choosable %}}
 {{< /chooser >}}
