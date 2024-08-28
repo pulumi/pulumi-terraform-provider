@@ -1,0 +1,6 @@
+{
+    "args": [
+        "hashicorp/random"
+    ],
+    "pulumiVersion": "3.130.0-dev.0"
+}

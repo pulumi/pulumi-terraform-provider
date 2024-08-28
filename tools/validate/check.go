@@ -80,6 +80,10 @@ func checkCmd() *cobra.Command {
 			}
 
 			fmt.Printf("All data collected\n")
+			fmt.Printf("Schema generated: %t\n", report.schema != nil)
+			for lang, r := range report.languages {
+				fmt.Printf("%s: generated=%t, built=%t\n", lang, r.sdkPath != "", r.succeeded)
+			}
 			exit(report.write(rootPath))
 		},
 	}

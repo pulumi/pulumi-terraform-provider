@@ -1,0 +1,4 @@
+{
+    "buildCommand": "dotnet build",
+    "succeded": true
+}
