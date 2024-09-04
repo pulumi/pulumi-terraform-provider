@@ -183,7 +183,7 @@ func (r providerReport) path() string {
 	}
 	return filepath.Join(
 		r.version,
-		r.schema.Name,
+		r.args[0],
 		r.schema.Version,
 	)
 }
