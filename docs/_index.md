@@ -133,13 +133,12 @@ To use this SDK in your Java project, complete the following steps:
 {{% /choosable %}}
 {{% choosable language yaml %}}
 
-{{% notes type="info" %}}
+```console
+$ pulumi package add terraform-provider hashicorp/random
+Downloading provider: terraform-provider
+```
 
-`terraform-provider` is not available for Pulumi YAML. We are working on
-bringing the underlying technology that `terraform-provider` uses to Pulumi YAML. Progress
-is tracked in [Parameterized Providers: YAML support #16802](https://github.com/pulumi/pulumi/issues/16802).
-
-{{% /notes %}}
+Note that the YAML language does not need an SDK.
 
 {{% /choosable %}}
 {{< /chooser >}}
@@ -223,7 +222,13 @@ public class App {
 {{% choosable language yaml %}}
 
 ```yaml
-# Coming soon
+name: Pulumi Program
+runtime: yaml
+resources:
+  pet:
+    type: random:RandomPet
+    properties:
+      length: 2
 ```
 
 {{% /choosable %}}
