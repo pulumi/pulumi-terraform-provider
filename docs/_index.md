@@ -76,7 +76,7 @@ To use this SDK in your Go project, run the following command:
 
 You can then use the SDK in your Go code with:
 
-  import "github.com/pulumi/pulumi-terraform-provider/sdks/go/random/v3"
+  import "github.com/pulumi/pulumi-terraform-provider/sdks/go/random/v3/random"
 
 ```
 
@@ -171,7 +171,7 @@ random.Pet("hi")
 package main
 
 import (
-	"github.com/pulumi/pulumi-terraform-provider/sdks/go/random/v3"
+	"github.com/pulumi/pulumi-terraform-provider/sdks/go/random/v3/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
