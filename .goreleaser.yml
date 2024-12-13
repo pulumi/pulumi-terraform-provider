@@ -1,8 +1,5 @@
 project_name: pulumi-terraform-provider
 version: 2
-before:
-  hooks:
-  - "make -C dynamic test"
 builds:
 - dir: dynamic
   env:
