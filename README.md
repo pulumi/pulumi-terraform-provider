@@ -11,4 +11,15 @@ This repository hosts user-facing documentation and hosts releases.
 
 ## Releasing
 
-To release `pulumi-terraform-provider`, tag this repository. It will release from [`master`](https://github.com/pulumi/pulumi-terraform-bridge/tree/master).
+To release `pulumi-terraform-provider`, tag this repository locally and then push tags:
+
+```sh
+git tag v<next>
+git push --tags
+```
+
+This will kick off the `release` Workflow, which will create a release from 
+[`pulumi-terraform-bridge@master`](https://github.com/pulumi/pulumi-terraform-bridge/tree/master).
+
+**NOTE:** Do _not_ create a release via the GitHub UI. 
+The `release` Workflow relies on a release asset fro the previous release to generate release notes.
