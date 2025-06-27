@@ -78,8 +78,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: test
-    permissions:
-      contents: write
     steps:
     - name: Fetch secrets from ESC
       id: esc-secrets
