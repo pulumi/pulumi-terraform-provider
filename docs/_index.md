@@ -226,7 +226,7 @@ name: Pulumi Program
 runtime: yaml
 resources:
   pet:
-    type: random:RandomPet
+    type: random:Pet
     properties:
       length: 2
 ```
