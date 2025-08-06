@@ -1,5 +1,7 @@
 Use any Terraform provider with Pulumi
 
+For complete documentation and examples, see the [Pulumi Registry](https://www.pulumi.com/registry/packages/terraform-provider/).
+
 ---
 
 ## Structure
