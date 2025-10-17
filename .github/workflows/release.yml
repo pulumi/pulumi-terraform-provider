@@ -117,7 +117,7 @@ jobs:
       #
       # We are running a release in the bridge git repo, but not releasing the bridge, so
       # we add a local tag to work around GoReleaser.
-      run: cd ${{ github.workspace }}/bridge && git tag "${{ github.ref_name }}"
+      run: cd ${{ github.workspace }}/bridge && git tag -f "${{ github.ref_name }}"
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
       with:
