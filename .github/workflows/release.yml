@@ -93,6 +93,15 @@ jobs:
       with:
         fetch-depth: 0
         path: ${{ github.workspace }}/repo
+    - env:
+        ESC_ACTION_ENVIRONMENT: github-secrets/${{ github.repository_owner }}-${{ github.event.repository.name }}
+        ESC_ACTION_EXPORT_ENVIRONMENT_VARIABLES: "false"
+        ESC_ACTION_OIDC_AUTH: "true"
+        ESC_ACTION_OIDC_ORGANIZATION: pulumi
+        ESC_ACTION_OIDC_REQUESTED_TOKEN_TYPE: urn:pulumi:token-type:access_token:organization
+      id: esc-secrets
+      name: Fetch secrets from ESC
+      uses: pulumi/esc-action@9eb774255b1a4afb7855678ae8d4a77359da0d9b
     - name: Stamp released SHA
       run: |
         cd ${{ github.workspace }}/bridge && git rev-parse HEAD >> ${{ github.workspace }}/bridge/release_sha.txt
@@ -118,15 +127,25 @@ jobs:
       # We are running a release in the bridge git repo, but not releasing the bridge, so
       # we add a local tag to work around GoReleaser.
       run: cd ${{ github.workspace }}/bridge && git tag -f "${{ github.ref_name }}"
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+      with:
+        aws-access-key-id: ${{ steps.esc-secrets.outputs.AWS_ACCESS_KEY_ID }}
+        aws-region: us-east-2
+        aws-secret-access-key: ${{ steps.esc-secrets.outputs.AWS_SECRET_ACCESS_KEY }}
+        role-duration-seconds: 7200
+        role-session-name: pulumi-terraform-provider@githubActions
+        role-external-id: upload-pulumi-release
+        role-to-assume: ${{ steps.esc-secrets.outputs.AWS_UPLOAD_ROLE_ARN }}
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v6
+      uses: goreleaser/goreleaser-action@5742e2a039330cbb23ebf35f046f814d4c6ff811 # v5.1.0
       with:
         args: >-
           release
           --clean
           --config ${{ github.workspace }}/repo/.goreleaser.yml
           --release-notes ${{ github.workspace }}/release-notes.md
-        version: "~> v2"
+        version: latest
         workdir: ${{ github.workspace }}/bridge
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
