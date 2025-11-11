@@ -6,13 +6,6 @@ layout: package
 
 Pulumi's `terraform-provider` can be used to generate full Pulumi SDKs for *any* Terraform provider.
 
-{{% notes type="warning" %}}
-
-This provider is in Public Beta. We are still making breaking changes to nail down the
-final design.
-
-{{% /notes %}}
-
 Any feedback is welcome! Please file suggestions and bugs at [pulumi/pulumi-terraform-provider](https://github.com/pulumi/pulumi-terraform-provider/issues).
 
 ## Example
