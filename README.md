@@ -17,7 +17,7 @@ To release `pulumi-terraform-provider`, tag this repository locally and then pus
 
 ```sh
 git tag v<next>
-git push --tags
+git push origin v<next>
 ```
 
 This will kick off the `release` Workflow, which will create a release from 
