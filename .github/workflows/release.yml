@@ -8,7 +8,6 @@ on:
 
 env:
   PULUMI_GO_DEP_ROOT: ${{ github.workspace }}/..
-  GOVERSION: 1.21.x
   ESC_ACTION_OIDC_AUTH: true
   ESC_ACTION_OIDC_ORGANIZATION: pulumi
   ESC_ACTION_OIDC_REQUESTED_TOKEN_TYPE: urn:pulumi:token-type:access_token:organization
@@ -26,15 +25,15 @@ jobs:
       run: |
         if [ "${{ github.ref_type }}" != "tag" ]; then exit 1; fi
     - name: Checkout Repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: pulumi/pulumi-terraform-bridge
     - name: Install Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
-        go-version: ${{ env.GOVERSION }}
+        go-version-file: go.mod
     - name: Install Pulumi CLI
-      uses: pulumi/actions@v5
+      uses: pulumi/actions@v7
     - name: Build pulumi-terraform-provider
       run: VERSION="${{ github.ref_name }}" make -C dynamic build
     - name: Check worktree clean
@@ -59,7 +58,7 @@ jobs:
     - name: Tar provider binary
       run: tar -zcf ${{ github.workspace }}/pulumi-terraform-provider.tar.gz -C ${{ github.workspace}}/dynamic/bin/ pulumi-resource-terraform-provider
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: pulumi-terraform-provider.tar.gz
         path: ${{ github.workspace }}/pulumi-terraform-provider.tar.gz
@@ -71,7 +70,7 @@ jobs:
       id: esc-secrets
       uses: pulumi/esc-action@v1
     - name: Download provider
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: pulumi-terraform-provider.tar.gz
         path: ${{ github.workspace }}/bin
@@ -83,13 +82,13 @@ jobs:
       id: esc-secrets
       uses: pulumi/esc-action@v1
     - name: Checkout Repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: pulumi/pulumi-terraform-bridge
         fetch-depth: 0
         path: ${{ github.workspace }}/bridge
     - name: Checkout Repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         path: ${{ github.workspace }}/repo
