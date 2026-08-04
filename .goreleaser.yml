@@ -1,3 +1,4 @@
+version: 2
 project_name: pulumi-terraform-provider
 builds:
 - dir: dynamic
@@ -19,7 +20,7 @@ archives:
 - name_template: "{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
   id: archive
 snapshot:
-  name_template: "{{ .Tag }}-SNAPSHOT"
+  version_template: "{{ .Tag }}-SNAPSHOT"
 # changelog: { disable: true } # We pass GoReleaser a CHANGELOG to use
 release:
   extra_files:
@@ -35,6 +36,6 @@ blobs:
 - provider: s3
   region: us-west-2
   bucket: get.pulumi.com
-  folder: releases/plugins/
+  directory: releases/plugins/
   ids:
   - archive
