@@ -1,7 +1,6 @@
 {
   "name": "terraform-provider",
   "displayName": "Any Terraform Provider",
-  "version": "0.0.0-dev",
   "description": "Use any Terraform provider with Pulumi",
   "keywords": [
     "catagory/utility"
