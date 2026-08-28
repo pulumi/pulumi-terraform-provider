@@ -25,11 +25,11 @@ jobs:
       run: |
         if [ "${{ github.ref_type }}" != "tag" ]; then exit 1; fi
     - name: Checkout Repo
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         repository: pulumi/pulumi-terraform-bridge
     - name: Install Go
-      uses: actions/setup-go@v7
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
       with:
         go-version-file: go.mod
     - name: Install Pulumi CLI
@@ -58,7 +58,7 @@ jobs:
     - name: Tar provider binary
       run: tar -zcf ${{ github.workspace }}/pulumi-terraform-provider.tar.gz -C ${{ github.workspace}}/dynamic/bin/ pulumi-resource-terraform-provider
     - name: Upload artifacts
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
       with:
         name: pulumi-terraform-provider.tar.gz
         path: ${{ github.workspace }}/pulumi-terraform-provider.tar.gz
@@ -70,7 +70,7 @@ jobs:
       id: esc-secrets
       uses: pulumi/esc-action@32dda43ffe7a2ab21e6bce11c781b44a3e5623cf # v3
     - name: Download provider
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
       with:
         name: pulumi-terraform-provider.tar.gz
         path: ${{ github.workspace }}/bin
@@ -82,13 +82,13 @@ jobs:
       id: esc-secrets
       uses: pulumi/esc-action@32dda43ffe7a2ab21e6bce11c781b44a3e5623cf # v3
     - name: Checkout Repo
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         repository: pulumi/pulumi-terraform-bridge
         fetch-depth: 0
         path: ${{ github.workspace }}/bridge
     - name: Checkout Repo
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       with:
         fetch-depth: 0
         path: ${{ github.workspace }}/repo
@@ -150,7 +150,7 @@ jobs:
         id: esc-secrets
         uses: pulumi/esc-action@32dda43ffe7a2ab21e6bce11c781b44a3e5623cf # v3
       - name: Dispatch Metadata build
-        uses: peter-evans/repository-dispatch@v4
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4
         with:
           token: ${{ steps.esc-secrets.outputs.PULUMI_BOT_TOKEN }}
           repository: pulumi/registry
