@@ -3,7 +3,7 @@
   "displayName": "Any Terraform Provider",
   "description": "Use any Terraform provider with Pulumi",
   "keywords": [
-    "catagory/utility"
+    "category/utility"
   ],
   "logoUrl": "https://raw.githubusercontent.com/pulumi/pulumi-terraform-provider/main/assets/logo.png",
   "meta": {
