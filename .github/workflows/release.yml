@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Fetch secrets from ESC
       id: esc-secrets
-      uses: pulumi/esc-action@b061167a29bad21ea5ff1fca900addb89227c49b # v3
+      uses: pulumi/esc-action@eec71a90d9989af7ff14bd700b83fc72fae36119 # v4
     - name: Ensure Tag (not branch)
       run: |
         if [ "${{ github.ref_type }}" != "tag" ]; then exit 1; fi
@@ -68,7 +68,7 @@ jobs:
     steps:
     - name: Fetch secrets from ESC
       id: esc-secrets
-      uses: pulumi/esc-action@b061167a29bad21ea5ff1fca900addb89227c49b # v3
+      uses: pulumi/esc-action@eec71a90d9989af7ff14bd700b83fc72fae36119 # v4
     - name: Download provider
       uses: actions/download-artifact@v8
       with:
@@ -80,7 +80,7 @@ jobs:
     steps:
     - name: Fetch secrets from ESC
       id: esc-secrets
-      uses: pulumi/esc-action@b061167a29bad21ea5ff1fca900addb89227c49b # v3
+      uses: pulumi/esc-action@eec71a90d9989af7ff14bd700b83fc72fae36119 # v4
     - name: Checkout Repo
       uses: actions/checkout@v7
       with:
@@ -148,7 +148,7 @@ jobs:
     steps:
       - name: Fetch secrets from ESC
         id: esc-secrets
-        uses: pulumi/esc-action@b061167a29bad21ea5ff1fca900addb89227c49b # v3
+        uses: pulumi/esc-action@eec71a90d9989af7ff14bd700b83fc72fae36119 # v4
       - name: Dispatch Metadata build
         uses: peter-evans/repository-dispatch@v4
         with:
