@@ -20,7 +20,7 @@ You will need to be using a version of Pulumi >= 3.147.0.
 
 In an existing project, run:
 
-{{< chooser language "typescript,python,go,csharp,java,yaml" >}}
+{{< chooser language "typescript,python,go,csharp,java,yaml,hcl" >}}
 {{% choosable language typescript %}}
 
 ```console
@@ -134,12 +134,31 @@ Downloading provider: terraform-provider
 Note that the YAML language does not need an SDK.
 
 {{% /choosable %}}
+{{% choosable language hcl %}}
+
+Pulumi HCL programs don't need `pulumi package add`. Declare the Terraform provider in `required_providers`, then run `pulumi install`, which generates the SDK through this package for you. See [HCL packages](/docs/iac/languages-sdks/hcl/#hcl-packages) for details.
+
+```hcl
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+    }
+  }
+}
+```
+
+```console
+$ pulumi install
+```
+
+{{% /choosable %}}
 {{< /chooser >}}
 
 By following the instructions given, we have generated a Pulumi SDK for the provider and
 linked it into our project. We can now import the SDK we generate and consume a resource from it:
 
-{{< chooser language "typescript,python,go,csharp,java,yaml" >}}
+{{< chooser language "typescript,python,go,csharp,java,yaml,hcl" >}}
 {{% choosable language typescript %}}
 
 ```ts
@@ -222,6 +241,23 @@ resources:
     type: random:Pet
     properties:
       length: 2
+```
+
+{{% /choosable %}}
+{{% choosable language hcl %}}
+
+```hcl
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+    }
+  }
+}
+
+resource "random_pet" "pet" {
+  length = 2
+}
 ```
 
 {{% /choosable %}}
